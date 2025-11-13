@@ -130,14 +130,393 @@
     </h5>
   </div>
   <div class="babyDiv">
-    <h1>Tracking Editor</h1>
+    <h1>Remove Brackets</h1>
     <br>
     <textarea id="mainArea" name="mainArea" rows="7" columns="20"></textarea>
     <br><br>
     <button onclick="showResults()">Remove & Copy</button>
     <br><br><br>
     <label id="results" name="results"></label>
-    <button onclick="goTracking()">Remove & Go</button>
+    <button onclick="goTracking()">Remove, Copy & Go</button>
+
+
+
+    <!--
+  ***************************************************************************************************************************************************************
+  ************************************************************* JavaScript Starts *******************************************************************************
+  ***************************************************************************************************************************************************************
+-->
+
+    <script>//JavaScript Starts 
+      var xyz = "xyz"; //for the dropdown menu - option selector
+
+      var x = document.getElementById("mainArea").value;
+      var y = "";
+      var z = "";
+      var w = "";
+
+      var puro = "https://www.purolator.com/en/shipping/tracker?pins=";
+      var fedex = "https://www.fedex.com/fedextrack/summary?trknbr=";
+      var ups = "https://www.ups.com/track?loc=en_CA&tracknum=";
+
+      var cleanUPS = "";
+
+      var cleanW = "";
+      var cleanY = "";
+      var cleanZ = "";
+      var newCleanW = "";
+      var newCleanZ = "";
+
+      function showTracking(url) {
+        window.open(url, '_blank');
+      }
+
+
+      //remove copy button - function 
+      function showResults() {
+        y = "";
+        z = "";
+        w = "";
+        cleanUPS = "";
+        x = document.getElementById("mainArea").value;
+        //alert(x[1]); 
+        let len = x.length;
+        //alert(len); 
+        for (let i = 0; i < len; i++) {
+          if (x[i] === " ") {
+            i = i + 5;
+            y = y + "<br>";
+            z = z + "\n";
+            w = w + ",\n";
+          }
+          if (x[i] === "\n") {
+            i++;
+            y = y + "<br>";
+            z = z + "\n";
+            //w = w + ",\n";
+          }
+          y = y + x[i];
+          z = z + x[i];
+          w = w + x[i];
+        }
+
+        cleanY = y.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
+        console.log("y : " + cleanY);
+        cleanZ = z.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
+        console.log("z : " + cleanZ);
+        cleanW = w.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
+        console.log("w : " + cleanW);
+
+        //document.getElementById("results").innerHTML = cleanY; //cleanY
+        document.getElementById("mainArea").value = cleanZ;
+        navigator.clipboard.writeText(cleanZ);
+        //showTracking(u+cleanW); 
+
+      }
+
+      //remove copy go button - function 
+      function goTracking() {
+
+        commaFinder = 1;
+        y = "";
+        z = "";
+        w = "";
+        x = document.getElementById("mainArea").value;
+        //alert(x[1]); 
+        let len = x.length;
+        //alert(len); 
+        for (let i = 0; i < len; i++) {
+          if (x[i] === " ") {
+            i = i + 5;
+            y = y + "<br>";
+            z = z + "\n";
+            w = w + ",";
+          }
+          if (x[i] === "\n") {
+            i++;
+            y = y + "<br>";
+            z = z + "\n";
+            //w = w + ",\n";
+          }
+          y = y + x[i];
+          z = z + x[i];
+          w = w + x[i];
+        }
+
+        cleanY = y.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
+        console.log("y : " + cleanY);
+        cleanZ = z.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
+        console.log("z : " + cleanZ);
+        cleanW = w.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
+        console.log("w : " + cleanW);
+        newCleanW = cleanW.slice(0, -1); //take out any extra commas, or space in the end 
+        newCleanZ = cleanZ.slice(0, -1); //take out extra enter space in the end of the tracking numbers 
+        console.log("newCleanW " + newCleanW);
+        document.getElementById("mainArea").value = newCleanZ;
+        navigator.clipboard.writeText(newCleanZ);
+        if (cleanZ[0] > 6) {
+          console.log("newCleanW after remove & go button : " + newCleanW);
+          //console.log()
+          showTracking(fedex + newCleanW);
+          newCleanW = '';
+
+          let cf2 = newCleanW.includes(',');
+          console.log("Comma Finder 2 : " + cf2)
+
+
+          /*
+          if(cf2){
+                          showTracking(fedex + newCleanW);
+                    newCleanW = '';
+          }
+          else {
+            let len2 = newCleanW.length + 1; 
+            for (e = 0; e < len2; e++){
+              if(e == 12){
+                newCleanW.insert
+              }
+            }
+          }
+          
+          
+          */
+
+          //try area ---------------------------------------------------------------------------------------------------------
+
+          //console.log(newCleanW.indexOf(",")); 
+          //commaFinder = newCleanW.indexOf(','); 
+          //console.log("Comma Finder : " + commaFinder); 
+
+          // 
+
+
+
+          //try area ends --------------------------------------------------------------------------------------------------------
+
+
+
+
+        } else if (cleanZ[0] > 2) {
+          showTracking(puro + newCleanW);
+        } else if (cleanZ[0] < 2) {
+          for (let h = 0; h < 18; h++) {
+            cleanUPS = cleanUPS + newCleanW[h];
+          }
+          showTracking(ups + cleanUPS);
+          cleanUPS = ''; //clear cleanUPS to avoid last tracking number 
+        } else {
+          alert("Please enter valid tracking numbers. Thank you.");
+        }
+      }
+
+      //dropdown change function
+      document.getElementById("whichKit2").onchange = function () {
+        if (this.value == "a") {
+          //alert("You selected Front only");
+          document.getElementById("frlbl").style.display = "block";
+          document.getElementById("fplbl").style.display = "block";
+          document.getElementById("rrlbl").style.display = "none";
+          document.getElementById("rplbl").style.display = "none";
+
+          document.getElementById("frotor").innerHTML = '';
+          document.getElementById("rrotor").innerHTML = '';
+          document.getElementById("fpad").innerHTML = '';
+          document.getElementById("rpad").innerHTML = '';
+
+          document.getElementById("total").value = 0;
+
+          xyz = 1;
+
+        } else if (this.value === "b") {
+          //alert("You selected Rear only");
+          document.getElementById("frlbl").style.display = "none";
+          document.getElementById("fplbl").style.display = "none";
+          document.getElementById("rrlbl").style.display = "block";
+          document.getElementById("rplbl").style.display = "block";
+
+          document.getElementById("frotor").innerHTML = '';
+          document.getElementById("rrotor").innerHTML = '';
+          document.getElementById("fpad").innerHTML = '';
+          document.getElementById("rpad").innerHTML = '';
+
+          document.getElementById("total").value = 0;
+
+          xyz = 2;
+
+        } else if (this.value === "c") {
+          //alert("You selected full kit");
+          document.getElementById("frlbl").style.display = "block";
+          document.getElementById("fplbl").style.display = "block";
+          document.getElementById("rrlbl").style.display = "block";
+          document.getElementById("rplbl").style.display = "block";
+
+          document.getElementById("frotor").innerHTML = '';
+          document.getElementById("rrotor").innerHTML = '';
+          document.getElementById("fpad").innerHTML = '';
+          document.getElementById("rpad").innerHTML = '';
+
+          document.getElementById("total").value = 0;
+
+          xyz = 3;
+
+        } else if (this.value === 'd') {
+          alert("Please make a valid selection.");
+        }//if else if nest ends
+      }//dropdown change function ends
+
+
+
+      //function to calculate the differences
+      function breakPrice() {
+        //document.getElementById("whichKit2").onchange = function () {
+        //var abc = document.getElementById("whichKit2"); 
+        //var def = abc.options[abc.selectedIndex].value; 
+        //alert("this is working!!");
+        if (xyz == 1) {
+          //alert("You selected Front only");
+          document.getElementById("frlbl").style.display = "block";
+          document.getElementById("fplbl").style.display = "block";
+          document.getElementById("rrlbl").style.display = "none";
+          document.getElementById("rplbl").style.display = "none";
+
+          const ttl = document.getElementById("total").value;
+          frcost = (ttl * 0.67);
+          //rrcost = (ttl * 0.30);
+          fpcost = (ttl * 0.33);
+          //rpcost = (ttl * 0.18);
+          document.getElementById("frotor").innerHTML = frcost.toFixed(2);
+          //document.getElementById("rrotor").innerHTML = rrcost.toFixed(2);
+          document.getElementById("fpad").innerHTML = fpcost.toFixed(2);
+          //document.getElementById("rpad").innerHTML = rpcost.toFixed(2);
+
+        } else if (xyz == 2) {
+          //alert("You selected Rear only");
+          document.getElementById("frlbl").style.display = "none";
+          document.getElementById("fplbl").style.display = "none";
+          document.getElementById("rrlbl").style.display = "block";
+          document.getElementById("rplbl").style.display = "block";
+
+          const ttl = document.getElementById("total").value;
+          //frcost = (ttl * 0.67);
+          rrcost = (ttl * 0.67);
+          //fpcost = (ttl * 0.33);
+          rpcost = (ttl * 0.33);
+          //document.getElementById("frotor").innerHTML = frcost.toFixed(2);
+          document.getElementById("rrotor").innerHTML = rrcost.toFixed(2);
+          //document.getElementById("fpad").innerHTML = fpcost.toFixed(2);
+          document.getElementById("rpad").innerHTML = rpcost.toFixed(2);
+
+        } else if (xyz == 3) {
+          //alert("You selected full kit");
+          document.getElementById("frlbl").style.display = "block";
+          document.getElementById("fplbl").style.display = "block";
+          document.getElementById("rrlbl").style.display = "block";
+          document.getElementById("rplbl").style.display = "block";
+
+          const ttl = document.getElementById("total").value;
+          frcost = (ttl * 0.33);
+          rrcost = (ttl * 0.30);
+          fpcost = (ttl * 0.19);
+          rpcost = (ttl * 0.18);
+          document.getElementById("frotor").innerHTML = frcost.toFixed(2);
+          document.getElementById("rrotor").innerHTML = rrcost.toFixed(2);
+          document.getElementById("fpad").innerHTML = fpcost.toFixed(2);
+          document.getElementById("rpad").innerHTML = rpcost.toFixed(2);
+
+        }
+      }//break price ends
+
+      function templateBuilder() {
+        //document.getElementById("templates").innerHTML = "COMING SOON!!!!"; 
+        alert("COMING SOON!!!");
+      }
+
+      //************************ DO NOT DELETE THIS ***********************************
+      //***
+      //function to trigger onclick when pressed enter in the input box       //*** 
+      var input = document.getElementById("total");                           //***
+      input.addEventListener("keypress", function (event) {                   //***  
+        if (event.key === "Enter") {                                          //***
+          event.preventDefault();                                             //***
+          document.getElementById("submit").click();                          //*** 
+        }                                                                     //*** 
+      })//event function ends                                                 //***
+      //***
+      //************************ DO NOT DELETE THIS ***********************************                                                                            
+
+      /*
+      
+      *************************************************************************************************
+      ********************* COMMENT SECTION - ROUGH AREA - STORAGE - ARCHIVES *************************
+      *************************************************************************************************
+      
+            frcost = (ttl * 0.33);
+        rrcost = (ttl * 0.30);
+        fpcost = (ttl * 0.19);
+        rpcost = (ttl * 0.18);
+        document.getElementById("frotor").innerHTML = frcost.toFixed(2);
+        document.getElementById("rrotor").innerHTML = rrcost.toFixed(2);
+        document.getElementById("fpad").innerHTML = fpcost.toFixed(2);
+        document.getElementById("rpad").innerHTML = rpcost.toFixed(2);
+      
+        document.getElementById("frlbl").style.display = "block"; 
+        document.getElementById("fplbl").style.display = "block"; 
+        document.getElementById("rrlbl").style.display = "none"; 
+        document.getElementById("rplbl").style.display = "none";
+          
+        if (x.checked == true) {
+        alert('Front kit selected'); 
+        }
+          
+              //for front kit only 
+        var input = document.getElementById("input");
+        input.addEventListener('input', () => {
+          if (x.checked) {
+            alert('this is a message!');
+          }
+        });
+      
+        //rear kit only
+        const y = document.getElementById("frontKit");
+        if (y.checked == true) {
+          alert('Rear kit selected');
+        }
+      
+        //full kit only
+        const z = document.getElementById("frontKit");
+        if (z.checked == true) {
+          alert('Full kit selected');
+        }
+         
+  
+  
+  
+        let len2 = y.length; 
+        for (let j = 0; j < len2; j++){
+          if (y[j] === undefined){
+            alert("There's undefined"); 
+            alert("before subs " + y.length); 
+            y.length = y.length - 10; 
+            
+            alert("after subs " + y.length); 
+            break; 
+          }
+        }
+  
+          
+          */
+    </script><!--JavaScript Ends-->
+
+    <!--
+  ***************************************************************************************************************************************************************
+  ************************************************************* JavaScript Ends *******************************************************************************
+  ***************************************************************************************************************************************************************
+-->
+</body>
+
+</html>
+
+<!--
 
   </div>
 
@@ -149,328 +528,5 @@
 
   </div>
 
-  <!--
-  ***************************************************************************************************************************************************************
-  ************************************************************* JavaScript Starts *******************************************************************************
-  ***************************************************************************************************************************************************************
+
 -->
-
-  <script>//JavaScript Starts 
-    var xyz = "xyz"; //for the dropdown menu - option selector
-
-    var x = document.getElementById("mainArea").value;
-    var y = "";
-    var z = "";
-    var w = "";
-
-    var puro = "https://www.purolator.com/en/shipping/tracker?pins=";
-    var fedex = "https://www.fedex.com/fedextrack/summary?trknbr=";
-    var ups = "https://www.ups.com/track?loc=en_CA&tracknum=";
-
-    var cleanUPS = "";
-
-    var cleanW = "";
-    var cleanY = "";
-    var cleanZ = "";
-    var newCleanW = "";
-
-    function showTracking(url) {
-      window.open(url, '_blank');
-    }
-
-
-
-    function showResults() {
-      y = "";
-      z = "";
-      w = "";
-      cleanUPS = "";
-      x = document.getElementById("mainArea").value;
-      //alert(x[1]); 
-      let len = x.length;
-      //alert(len); 
-      for (let i = 0; i < len; i++) {
-        if (x[i] === " ") {
-          i = i + 5;
-          y = y + "<br>";
-          z = z + "\n";
-          w = w + ",\n";
-        }
-        if (x[i] === "\n") {
-          i++;
-          y = y + "<br>";
-          z = z + "\n";
-          //w = w + ",\n";
-        }
-        y = y + x[i];
-        z = z + x[i];
-        w = w + x[i];
-      }
-
-      cleanY = y.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
-      console.log("y : " + cleanY);
-      cleanZ = z.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
-      console.log("z : " + cleanZ);
-      cleanW = w.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
-      console.log("w : " + cleanW);
-
-      //document.getElementById("results").innerHTML = cleanY; //cleanY
-      document.getElementById("mainArea").value = cleanZ;
-      navigator.clipboard.writeText(cleanZ);
-      //showTracking(u+cleanW); 
-
-    }
-
-    function goTracking() {
-      y = "";
-      z = "";
-      w = "";
-      x = document.getElementById("mainArea").value;
-      //alert(x[1]); 
-      let len = x.length;
-      //alert(len); 
-      for (let i = 0; i < len; i++) {
-        if (x[i] === " ") {
-          i = i + 5;
-          y = y + "<br>";
-          z = z + "\n";
-          w = w + ",";
-        }
-        if (x[i] === "\n") {
-          i++;
-          y = y + "<br>";
-          z = z + "\n";
-          //w = w + ",\n";
-        }
-        y = y + x[i];
-        z = z + x[i];
-        w = w + x[i];
-      }
-
-      cleanY = y.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
-      console.log("y : " + cleanY);
-      cleanZ = z.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
-      console.log("z : " + cleanZ);
-      cleanW = w.replace(/undefined/g, ""); //remove any 'undefined' tags in the end 
-      console.log("w : " + cleanW);
-      newCleanW = cleanW.slice(0, -1);
-      document.getElementById("mainArea").value = cleanZ;
-      navigator.clipboard.writeText(cleanZ);
-      if (cleanZ[0] > 6) {
-        showTracking(fedex + newCleanW);
-      } else if (cleanZ[0] > 2) {
-        showTracking(puro + newCleanW);
-      } else {
-        for (let h = 0; h < 18; h++) {
-          cleanUPS = cleanUPS + newCleanW[h];
-        }
-        showTracking(ups + cleanUPS);
-      }
-    }
-
-    //dropdown change function
-    document.getElementById("whichKit2").onchange = function () {
-      if (this.value == "a") {
-        //alert("You selected Front only");
-        document.getElementById("frlbl").style.display = "block";
-        document.getElementById("fplbl").style.display = "block";
-        document.getElementById("rrlbl").style.display = "none";
-        document.getElementById("rplbl").style.display = "none";
-
-        document.getElementById("frotor").innerHTML = '';
-        document.getElementById("rrotor").innerHTML = '';
-        document.getElementById("fpad").innerHTML = '';
-        document.getElementById("rpad").innerHTML = '';
-
-        document.getElementById("total").value = 0;
-
-        xyz = 1;
-
-      } else if (this.value === "b") {
-        //alert("You selected Rear only");
-        document.getElementById("frlbl").style.display = "none";
-        document.getElementById("fplbl").style.display = "none";
-        document.getElementById("rrlbl").style.display = "block";
-        document.getElementById("rplbl").style.display = "block";
-
-        document.getElementById("frotor").innerHTML = '';
-        document.getElementById("rrotor").innerHTML = '';
-        document.getElementById("fpad").innerHTML = '';
-        document.getElementById("rpad").innerHTML = '';
-
-        document.getElementById("total").value = 0;
-
-        xyz = 2;
-
-      } else if (this.value === "c") {
-        //alert("You selected full kit");
-        document.getElementById("frlbl").style.display = "block";
-        document.getElementById("fplbl").style.display = "block";
-        document.getElementById("rrlbl").style.display = "block";
-        document.getElementById("rplbl").style.display = "block";
-
-        document.getElementById("frotor").innerHTML = '';
-        document.getElementById("rrotor").innerHTML = '';
-        document.getElementById("fpad").innerHTML = '';
-        document.getElementById("rpad").innerHTML = '';
-
-        document.getElementById("total").value = 0;
-
-        xyz = 3;
-
-      } else if (this.value === 'd') {
-        alert("Please make a valid selection.");
-      }//if else if nest ends
-    }//dropdown change function ends
-
-
-
-    //function to calculate the differences
-    function breakPrice() {
-      //document.getElementById("whichKit2").onchange = function () {
-      //var abc = document.getElementById("whichKit2"); 
-      //var def = abc.options[abc.selectedIndex].value; 
-      //alert("this is working!!");
-      if (xyz == 1) {
-        //alert("You selected Front only");
-        document.getElementById("frlbl").style.display = "block";
-        document.getElementById("fplbl").style.display = "block";
-        document.getElementById("rrlbl").style.display = "none";
-        document.getElementById("rplbl").style.display = "none";
-
-        const ttl = document.getElementById("total").value;
-        frcost = (ttl * 0.67);
-        //rrcost = (ttl * 0.30);
-        fpcost = (ttl * 0.33);
-        //rpcost = (ttl * 0.18);
-        document.getElementById("frotor").innerHTML = frcost.toFixed(2);
-        //document.getElementById("rrotor").innerHTML = rrcost.toFixed(2);
-        document.getElementById("fpad").innerHTML = fpcost.toFixed(2);
-        //document.getElementById("rpad").innerHTML = rpcost.toFixed(2);
-
-      } else if (xyz == 2) {
-        //alert("You selected Rear only");
-        document.getElementById("frlbl").style.display = "none";
-        document.getElementById("fplbl").style.display = "none";
-        document.getElementById("rrlbl").style.display = "block";
-        document.getElementById("rplbl").style.display = "block";
-
-        const ttl = document.getElementById("total").value;
-        //frcost = (ttl * 0.67);
-        rrcost = (ttl * 0.67);
-        //fpcost = (ttl * 0.33);
-        rpcost = (ttl * 0.33);
-        //document.getElementById("frotor").innerHTML = frcost.toFixed(2);
-        document.getElementById("rrotor").innerHTML = rrcost.toFixed(2);
-        //document.getElementById("fpad").innerHTML = fpcost.toFixed(2);
-        document.getElementById("rpad").innerHTML = rpcost.toFixed(2);
-
-      } else if (xyz == 3) {
-        //alert("You selected full kit");
-        document.getElementById("frlbl").style.display = "block";
-        document.getElementById("fplbl").style.display = "block";
-        document.getElementById("rrlbl").style.display = "block";
-        document.getElementById("rplbl").style.display = "block";
-
-        const ttl = document.getElementById("total").value;
-        frcost = (ttl * 0.33);
-        rrcost = (ttl * 0.30);
-        fpcost = (ttl * 0.19);
-        rpcost = (ttl * 0.18);
-        document.getElementById("frotor").innerHTML = frcost.toFixed(2);
-        document.getElementById("rrotor").innerHTML = rrcost.toFixed(2);
-        document.getElementById("fpad").innerHTML = fpcost.toFixed(2);
-        document.getElementById("rpad").innerHTML = rpcost.toFixed(2);
-
-      }
-    }//break price ends
-
-    function templateBuilder() {
-      //document.getElementById("templates").innerHTML = "COMING SOON!!!!"; 
-      alert("COMING SOON!!!");
-    }
-
-    //************************ DO NOT DELETE THIS ***********************************
-    //***
-    //function to trigger onclick when pressed enter in the input box       //*** 
-    var input = document.getElementById("total");                           //***
-    input.addEventListener("keypress", function (event) {                   //***  
-      if (event.key === "Enter") {                                          //***
-        event.preventDefault();                                             //***
-        document.getElementById("submit").click();                          //*** 
-      }                                                                     //*** 
-    })//event function ends                                                 //***
-    //***
-    //************************ DO NOT DELETE THIS ***********************************                                                                            
-
-    /*
-    
-    *************************************************************************************************
-    ********************* COMMENT SECTION - ROUGH AREA - STORAGE - ARCHIVES *************************
-    *************************************************************************************************
-    
-          frcost = (ttl * 0.33);
-      rrcost = (ttl * 0.30);
-      fpcost = (ttl * 0.19);
-      rpcost = (ttl * 0.18);
-      document.getElementById("frotor").innerHTML = frcost.toFixed(2);
-      document.getElementById("rrotor").innerHTML = rrcost.toFixed(2);
-      document.getElementById("fpad").innerHTML = fpcost.toFixed(2);
-      document.getElementById("rpad").innerHTML = rpcost.toFixed(2);
-    
-      document.getElementById("frlbl").style.display = "block"; 
-      document.getElementById("fplbl").style.display = "block"; 
-      document.getElementById("rrlbl").style.display = "none"; 
-      document.getElementById("rplbl").style.display = "none";
-        
-      if (x.checked == true) {
-      alert('Front kit selected'); 
-      }
-        
-            //for front kit only 
-      var input = document.getElementById("input");
-      input.addEventListener('input', () => {
-        if (x.checked) {
-          alert('this is a message!');
-        }
-      });
-    
-      //rear kit only
-      const y = document.getElementById("frontKit");
-      if (y.checked == true) {
-        alert('Rear kit selected');
-      }
-    
-      //full kit only
-      const z = document.getElementById("frontKit");
-      if (z.checked == true) {
-        alert('Full kit selected');
-      }
-       
-
-
-
-      let len2 = y.length; 
-      for (let j = 0; j < len2; j++){
-        if (y[j] === undefined){
-          alert("There's undefined"); 
-          alert("before subs " + y.length); 
-          y.length = y.length - 10; 
-          
-          alert("after subs " + y.length); 
-          break; 
-        }
-      }
-
-        
-        */
-  </script><!--JavaScript Ends-->
-
-  <!--
-  ***************************************************************************************************************************************************************
-  ************************************************************* JavaScript Ends *******************************************************************************
-  ***************************************************************************************************************************************************************
--->
-</body>
-
-</html>
